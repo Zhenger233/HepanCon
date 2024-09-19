@@ -8,7 +8,7 @@ if __name__ == '__main__':
     else:
         print(strings[6])
         login()
-        if checkLogin():
-            pass
-        else:
-            print(strings[5])
+    while True:
+        s = input('>>> ')
+        if s == 'exit':
+            break

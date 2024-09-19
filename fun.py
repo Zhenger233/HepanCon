@@ -5,6 +5,7 @@ import json
 import getpass
 from strs import strings
 
+
 urlBase = 'https://bbs.uestc.edu.cn/mobcent/app/web/index.php'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
@@ -39,7 +40,7 @@ def checkLogin() -> bool:
         return False
     paramst = {
         'r': 'forum/postlist',
-        'topicId': 1000,
+        'topicId': 217527,
         'pageSize': 1,
         'page': 1,
         'order': 0,
@@ -74,6 +75,7 @@ def loginWithUsernamePassword(username: str = '', password: str = ''):
         setInfo('password', password)
         print(f"{info['userName']}({info['userTitle']}) {strings[3]} {info['creditShowList'][0]['title']}: {info['creditShowList'][0]['data']}, {info['creditShowList'][1]['title']}: {info['creditShowList'][1]['data']}")
     except Exception as e:
+        print(strings[5])
         print(e)
 
 def login(username: str = '', password: str = ''):
