@@ -31,8 +31,8 @@ def setInfo(key: str, value):
     json.dump(info, open(infoFile, 'w', encoding = 'utf-8'))
 
 def getAppHashValue() -> str:
-    s = f'{time.time()}'[:5] + 'appbyme_key'
-    apphash = hashlib.md5(s.encode('utf-8')).hexdigest()
+    authString = f'{time.time()}'[:5] + 'appbyme_key'
+    apphash = hashlib.md5(authString.encode('utf-8')).hexdigest()
     return apphash[8:16]
 
 def checkLogin() -> bool:
@@ -85,3 +85,24 @@ def login(username: str = '', password: str = ''):
         un = input(strings[1])
         pw = getpass.getpass(strings[2])
         loginWithUsernamePassword(un, pw)
+        
+def getHot10():
+    paramsHot10 = {
+        'r': 'portal/newslist',
+        'moduleId': 2
+    }
+    res = requests.post(urlBase, params=paramsHot10, headers=headers)
+    if res.json()['rs'] == 1:
+        hot_list = res.json()['list']
+        idx = 0
+        for item in hot_list:
+            user_id = item.get('user_id', 'N/A')
+            user_nick_name = item.get('user_nick_name', 'N/A')
+            title = item.get('title', 'N/A')
+            sourceWebUrl = item.get('sourceWebUrl', 'N/A')
+            print(f"{idx} user_id: {user_id} user_nick_name: {user_nick_name}, title: {title}, sourceWebUrl: {sourceWebUrl}")
+            idx += 1
+        return hot_list
+    else:
+        print(res.json()['errcode'])
+        return []

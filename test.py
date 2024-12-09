@@ -1,10 +1,10 @@
-from fun import getAppHashValue, login, getInfo, setInfo, checkLogin
+from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10
 from strs import strings
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
 
-def test():
+def testLogin():
     print(getAppHashValue())
     print(getInfo('token'))
     setInfo('token', '123456')
@@ -12,7 +12,12 @@ def test():
     print(getInfo('token'))
     print(getInfo('secret'))
     checkLogin()
-    
+
+def testHot10():
+    getHot10()
+
+def testStrings():
+    print(strings)
 
 if __name__ == '__main__':
-    print(strings)
+    testHot10()
