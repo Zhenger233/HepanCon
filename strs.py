@@ -7,5 +7,6 @@ strSet = {
     4: ['Have logged in!', '已经登录!'],
     5: ['Login Failed!', '登录失败！'],
     6: ['Please login!', '请登录！'],
+    7: ['Reply OK!', '回复成功！']
 }
 strings = { k: strSet[k][strSelect] for k in strSet }

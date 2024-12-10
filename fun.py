@@ -4,12 +4,14 @@ import time
 import json
 import getpass
 from strs import strings
+from pprint import pprint
 
 
 urlBase = 'https://bbs.uestc.edu.cn/mobcent/app/web/index.php'
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36',
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    'Accept': 'application/json, text/plain, */*;'
 }
 infoFile = 'info.json'
 
@@ -40,16 +42,15 @@ def checkLogin() -> bool:
         return False
     paramst = {
         'r': 'forum/postlist',
-        'topicId': 217527,
+        'topicId': 2203132,
         'pageSize': 1,
         'page': 1,
-        'order': 0,
-        'apphash': '',
+        'order': 1,
         'accessToken': getInfo('token'),
         'accessSecret': getInfo('secret')
     }
     res = requests.post(urlBase, params = paramst, headers = headers)
-    # print(res.json())
+    pprint(res.json())
     if res.json()['rs'] == 1:
         return True
     else:
@@ -94,6 +95,7 @@ def getHot10():
     res = requests.post(urlBase, params=paramsHot10, headers=headers)
     if res.json()['rs'] == 1:
         hot_list = res.json()['list']
+        # pprint(hot_list)
         idx = 0
         for item in hot_list:
             user_id = item.get('user_id', 'N/A')
@@ -106,3 +108,31 @@ def getHot10():
     else:
         print(res.json()['errcode'])
         return []
+
+def reply(tid, content):
+    replycontent = [{'type': 0,'infor': content}]
+    replyjson = {
+        'body': {
+            'json': {
+                'tid': tid, 
+                'content': json.dumps(replycontent),
+            }
+        }
+    }
+
+    paramsReply = {
+        'r': 'forum/topicadmin',
+        'act': 'reply',
+        'apphash': getAppHashValue(),
+        'accessToken': getInfo('token'),
+        'accessSecret': getInfo('secret')
+    }
+    data1 = (('act', 'reply'), ('json', json.dumps(replyjson)))
+    res = requests.post(urlBase, params=paramsReply, headers=headers, data=data1)
+    try:
+        if res.json()['rs'] == 1:
+            pprint(strings[7])
+        else:
+            pprint(res.json())
+    except:
+        print(res.text)
