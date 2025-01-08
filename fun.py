@@ -127,7 +127,7 @@ def reply(tid, content):
         'accessToken': getInfo('token'),
         'accessSecret': getInfo('secret')
     }
-    data1 = (('act', 'reply'), ('json', json.dumps(replyjson)))
+    data1 = { 'act': 'reply', 'json': json.dumps(replyjson) }
     res = requests.post(urlBase, params=paramsReply, headers=headers, data=data1)
     try:
         if res.json()['rs'] == 1:
