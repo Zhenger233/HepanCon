@@ -1,7 +1,7 @@
-from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, reply
+from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, reply, getReplyList, getNewAuth, session, getReplyListNew
 from strs import strings
 from urllib.parse import quote
-import requests, json, re
+import requests, json, re, sys
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -46,7 +46,7 @@ def testReplyHot10():
     login(myUsername, myPassword)
     l = getHot10()
     s = hot10list2str(l[:3])
-    reply(2237365, s)
+    reply(2225218, s)
 
 def testZhihu():
     res = requests.get('https://api.cenguigui.cn/api/juhe/hotlist.php?type=zhihu', timeout=5)
@@ -61,9 +61,28 @@ def testZhihu():
         s += f'[tr][td]{idx}[/td][td]{title}[/td][td]{hot}[/td][td]{qid}[/td][/tr]\n'
     return s
 
+def testGetReplyList():
+    l = getReplyList(2225218, 1, 50)
+    sys.stdout.reconfigure(encoding='utf-8')
+    print(json.dumps(l, indent=4, ensure_ascii=False))
+    # for r in l:
+    #     if r['reply_id'] != 217527 or r['reply_content']
+
+def testGetPeplyListNew():
+    getNewAuth()
+    l = getReplyListNew(2225218, 1)
+    sys.stdout.reconfigure(encoding='utf-8')
+    # print(json.dumps(l, indent=4, ensure_ascii=False))
+    for r in l:
+        if r['author_id'] == 217527 and 'viewthread' in r['message']:
+            print(r['position'])
+
 if __name__ == '__main__':
     # testLogin()
     # testHot10()
-    testReplyHot10()
+    # testReplyHot10()
     # testZhihu()
+    # testGetReplyList()
+    # checkLogin()
+    testGetPeplyListNew()
     ...

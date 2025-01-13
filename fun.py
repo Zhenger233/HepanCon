@@ -14,8 +14,8 @@ headers = {
     'Accept': 'application/json, text/plain, */*;'
 }
 infoFile = 'info.json'
-
-
+urlBaseNew = 'https://bbs.uestc.edu.cn/star/api/v1'
+session = requests.Session()
 
 def getInfo(key: str):
     try:
@@ -36,6 +36,23 @@ def getAppHashValue() -> str:
     authString = f'{time.time()}'[:5] + 'appbyme_key'
     apphash = hashlib.md5(authString.encode('utf-8')).hexdigest()
     return apphash[8:16]
+
+def getReplyList(tid: int, page: int = 1, pageSize: int = 10):
+    paramst = {
+        'r': 'forum/postlist',
+        'topicId': tid,
+        'pageSize': pageSize,
+        'page': page,
+        'order': 0,
+        'accessToken': getInfo('token'),
+        'accessSecret': getInfo('secret')
+    }
+    res = requests.post(urlBase, params = paramst, headers = headers)
+    if res.json()['rs'] == 1:
+        return res.json()['list']
+    else:
+        print(res.json()['errcode'])
+        return []
 
 def checkLogin() -> bool:
     if getInfo('token') == '' or getInfo('secret') == '' or getInfo('username') == '' or getInfo('password') == '':
@@ -86,7 +103,28 @@ def login(username: str = '', password: str = ''):
         un = input(strings[1])
         pw = getpass.getpass(strings[2])
         loginWithUsernamePassword(un, pw)
-        
+
+def getNewAuth():
+    resp = session.post(urlBase, params={
+        'r': 'user/login',
+        'type': 'login',
+        'username': getInfo('username'),
+        'password': getInfo('password'),
+    }, headers=headers)
+    # print(resp.cookies)
+    res = session.post(urlBaseNew + '/auth/adoptLegacyAuth', headers = {'x-uestc-bbs': '1'})
+    # print(res.json()['data']['authorization'])
+    setInfo('authorization', res.json()['data']['authorization'])
+    session.headers['authorization'] = getInfo('authorization')
+
+def getReplyListNew(tid: int, page: int = 1, pageSize: int = 10):
+    res = session.get(urlBaseNew + f'/post/list?thread_id={tid}&page={page}&page_size={pageSize}thread_details=1&forum_details=0')
+    if res.json()['code'] == 0:
+        return res.json()['data']['rows']
+    else:
+        # print(res.request.headers)
+        return []
+
 def getHot10():
     paramsHot10 = {
         'r': 'portal/newslist',
