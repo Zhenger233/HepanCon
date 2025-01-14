@@ -1,7 +1,10 @@
+import os, sys
+current_directory = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_directory)
 from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, reply, getReplyList, getNewAuth, session, getReplyListNew
 from strs import strings
 from urllib.parse import quote
-import requests, json, re, sys
+import requests, json, re
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -57,7 +60,7 @@ def testZhihu():
         idx = item['index']
         title = item['title']
         hot = item['hot']
-        qid = re.sub('\D', '', item['url'])
+        qid = re.sub(r'\D', '', item['url'])
         s += f'[tr][td]{idx}[/td][td]{title}[/td][td]{hot}[/td][td]{qid}[/td][/tr]\n'
     return s
 
@@ -75,7 +78,13 @@ def testGetPeplyListNew():
     # print(json.dumps(l, indent=4, ensure_ascii=False))
     for r in l:
         if r['author_id'] == 217527 and 'viewthread' in r['message']:
-            print(r['position'])
+            s = r['message']
+            s1 = s[7:s.find('[/table]')]
+            pattern = re.compile(r'\[tr\](.*?)\[/tr\]', re.DOTALL)
+            rows = pattern.findall(s1)[1:]
+            for row in rows:
+                cells = re.findall(r'\[td\](.*?)\[/td\]', row, re.DOTALL)
+                print(cells)
 
 if __name__ == '__main__':
     # testLogin()

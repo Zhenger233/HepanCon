@@ -1,3 +1,6 @@
+import os, sys
+current_directory = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_directory)
 from fun import login, checkLogin, getInfo, getHot10
 from strs import strings
 
