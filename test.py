@@ -5,6 +5,7 @@ from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, 
 from strs import strings
 from urllib.parse import quote
 import requests, json, re
+from collections import Counter
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -74,17 +75,29 @@ def testGetReplyList():
 def testGetPeplyListNew():
     getNewAuth()
     l = getReplyListNew(2225218, 1)
+    totalpage = l['total'] // 20 + 1
     sys.stdout.reconfigure(encoding='utf-8')
     # print(json.dumps(l, indent=4, ensure_ascii=False))
-    for r in l:
-        if r['author_id'] == 217527 and 'viewthread' in r['message']:
-            s = r['message']
-            s1 = s[7:s.find('[/table]')]
-            pattern = re.compile(r'\[tr\](.*?)\[/tr\]', re.DOTALL)
-            rows = pattern.findall(s1)[1:]
-            for row in rows:
-                cells = re.findall(r'\[td\](.*?)\[/td\]', row, re.DOTALL)
-                print(cells)
+    userList = []
+    boardList = []
+    for page in range(1, totalpage + 1):
+        l = getReplyListNew(2225218, page)['rows']
+        for r in l:
+            if r['author_id'] == 217527 and 'viewthread' in r['message']:
+                s = r['message']
+                s1 = s[7:s.find('[/table]')]
+                pattern = re.compile(r'\[tr\](.*?)\[/tr\]', re.DOTALL)
+                rows = pattern.findall(s1)[1:]
+                for row in rows:
+                    cells = re.findall(r'\[td\](.*?)\[/td\]', row, re.DOTALL)
+                    # print(cells)
+                    userList.append(cells[1])
+                    boardList.append(cells[6])
+                    # todo: user.count reply.max reply.min reply.total hit.max hit.min reply.total board.count 
+    userCounter = Counter(userList)
+    boardCounter = Counter(boardList)
+    print(userCounter)
+    print(boardCounter)
 
 if __name__ == '__main__':
     # testLogin()

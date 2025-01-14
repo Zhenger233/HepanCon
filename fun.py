@@ -120,7 +120,7 @@ def getNewAuth():
 def getReplyListNew(tid: int, page: int = 1, pageSize: int = 10):
     res = session.get(urlBaseNew + f'/post/list?thread_id={tid}&page={page}&page_size={pageSize}thread_details=1&forum_details=0')
     if res.json()['code'] == 0:
-        return res.json()['data']['rows']
+        return res.json()['data']
     else:
         # print(res.request.headers)
         return []
