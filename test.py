@@ -1,11 +1,14 @@
 import os, sys
 current_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_directory)
-from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, reply, getReplyList, getNewAuth, session, getReplyListNew
+from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, reply, getReplyList, getNewAuth, session, getReplyListNew, getLatestHot
 from strs import strings
 from urllib.parse import quote
 import requests, json, re
 from collections import Counter, defaultdict
+import hashlib
+import random
+from datetime import datetime, timedelta
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -111,6 +114,18 @@ def testGetPeplyListNew():
     print(mdTable)
     reply(2234746, mdTable)
 
+def testRoll():
+    content = getLatestHot()
+    s = ''.join(map(lambda x: x['infor'], content))
+    print(s)
+    seed = int(hashlib.md5(s.encode()).hexdigest(), 16)
+    print('seed: ', seed)
+    random.seed(seed)
+    rands = random.randint(0, 24 * 60 * 60 - 1)
+    print('seconds: ', rands)
+    randt = datetime.now().replace(hour = 0, minute = 0, second = 0, microsecond = 0) + timedelta(seconds = rands)
+    print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
+
 if __name__ == '__main__':
     # testLogin()
     # testHot10()
@@ -118,5 +133,6 @@ if __name__ == '__main__':
     # testZhihu()
     # testGetReplyList()
     # checkLogin()
-    testGetPeplyListNew()
+    # testGetPeplyListNew() # todo: edit 2225218
+    testRoll()
     ...

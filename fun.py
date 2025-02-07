@@ -54,6 +54,24 @@ def getReplyList(tid: int, page: int = 1, pageSize: int = 10):
         print(res.json()['errcode'])
         return []
 
+def getLatestHot():
+    paramst = {
+        'r': 'forum/postlist',
+        'topicId': 2225218,
+        'pageSize': 1,
+        'page': '1',
+        'order': 1,
+        'accessToken': getInfo('token'),
+        'accessSecret': getInfo('secret'),
+        'authorId': 217527
+    }
+    res = requests.post(urlBase, params = paramst, headers = headers)
+    if res.json()['rs'] == 1:
+        return res.json()['list'][0]['reply_content']
+    else:
+        print(res.json())
+        return ''
+
 def checkLogin() -> bool:
     if getInfo('token') == '' or getInfo('secret') == '' or getInfo('username') == '' or getInfo('password') == '':
         return False
