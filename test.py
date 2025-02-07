@@ -5,7 +5,7 @@ from fun import getAppHashValue, login, getInfo, setInfo, checkLogin, getHot10, 
 from strs import strings
 from urllib.parse import quote
 import requests, json, re
-from collections import Counter
+from collections import Counter, defaultdict
 
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -98,6 +98,18 @@ def testGetPeplyListNew():
     boardCounter = Counter(boardList)
     print(userCounter)
     print(boardCounter)
+    userDict = defaultdict(list)
+    for u, c in userCounter.items():
+        userDict[c].append(u)
+    mdTable = '[table][tr][td]Count[/td][td]User[/td][/tr]\n'
+    for c, u in sorted(userDict.items(), reverse=True):
+        mdTable += f'[tr][td]{c}[/td][td]{" ".join(u)}[/td][/tr]\n'
+    mdTable += '[/table]\n[table][tr][td]Board[/td][td]Count[/td][/tr]\n'
+    for b, c in sorted(boardCounter.items(), reverse=True, key=lambda item: item[1]):
+        mdTable += f'[tr][td]{b}[/td][td]{c}[/td][/tr]\n'
+    mdTable += '[/table]'
+    print(mdTable)
+    reply(2234746, mdTable)
 
 if __name__ == '__main__':
     # testLogin()
