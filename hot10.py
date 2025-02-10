@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-from fun import login, getInfo, getHot10, reply
-import requests, re
+from fun import login, getInfo, getHot10, reply, getLatestHot
+import requests, re, random, hashlib
+from datetime import datetime, timedelta
 myUsername = getInfo('username')
 myPassword = getInfo('password')
 
@@ -42,7 +43,22 @@ def testReplyHot10():
     login(myUsername, myPassword)
     l = getHot10()
     s = hot10list2str(l)
-    reply(2225218, s)
+    # reply(2225218, s)
+    
+    content = getLatestHot()
+    s = ''.join(map(lambda x: x['infor'], content))
+    print(s)
+    seed = int(hashlib.md5(s.encode()).hexdigest(), 16)
+    print('seed: ', seed)
+    s += f'\nseed: {seed}'
+    random.seed(seed)
+    rands = random.randint(0, 24 * 60 * 60 - 1)
+    print('seconds: ', rands)
+    s += f'\nseconds: {rands}'
+    randt = datetime.now().replace(hour = 0, minute = 0, second = 0, microsecond = 0) + timedelta(seconds = rands)
+    print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
+    s += f'\ntime: {randt.strftime("%Y-%m-%d %H:%M:%S")}'
+    reply(2247158, s)
 
 if __name__ == '__main__':
     # testLogin()
