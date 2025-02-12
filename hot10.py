@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from fun import login, getInfo, getHot10, reply, getLatestHot
-import requests, re, random, hashlib
+import requests, re, random, hashlib, time
 from datetime import datetime, timedelta
 myUsername = getInfo('username')
 myPassword = getInfo('password')
@@ -43,7 +43,7 @@ def testReplyHot10():
     login(myUsername, myPassword)
     l = getHot10()
     s = hot10list2str(l)
-    # reply(2225218, s)
+    reply(2225218, s)
     
     content = getLatestHot()
     s = ''.join(map(lambda x: x['infor'], content))
@@ -58,6 +58,7 @@ def testReplyHot10():
     randt = datetime.now().replace(hour = 0, minute = 0, second = 0, microsecond = 0) + timedelta(seconds = rands)
     print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
     s += f'\ntime: {randt.strftime("%Y-%m-%d %H:%M:%S")}'
+    time.sleep(5)
     reply(2247158, s)
 
 if __name__ == '__main__':
