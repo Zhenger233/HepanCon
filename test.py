@@ -106,7 +106,7 @@ def testGetPeplyListNew():
         userDict[c].append(u)
     mdTable = '[table][tr][td]Count[/td][td]User[/td][/tr]\n'
     for c, u in sorted(userDict.items(), reverse=True):
-        mdTable += f'[tr][td]{c}[/td][td]{" ".join(u)}[/td][/tr]\n'
+        mdTable += f'[tr][td]{c}({len(u)})[/td][td]{" ".join(u)}[/td][/tr]\n'
     mdTable += '[/table]\n[table][tr][td]Board[/td][td]Count[/td][/tr]\n'
     for b, c in sorted(boardCounter.items(), reverse=True, key=lambda item: item[1]):
         mdTable += f'[tr][td]{b}[/td][td]{c}[/td][/tr]\n'
