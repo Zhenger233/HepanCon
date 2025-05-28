@@ -5,6 +5,8 @@ import json
 import getpass
 from strs import strings
 from pprint import pprint
+import WebAPI
+# 网页API
 
 
 urlBase = 'https://bbs.uestc.edu.cn/mobcent/app/web/index.php'
@@ -85,11 +87,13 @@ def checkLogin() -> bool:
         'accessSecret': getInfo('secret')
     }
     res = requests.post(urlBase, params = paramst, headers = headers)
-    pprint(res.json())
+    pprint(res.json()['topic']['hits'])
     if res.json()['rs'] == 1:
         return True
     else:
         return False
+
+
 
 def loginWithUsernamePassword(username: str = '', password: str = ''):
     paramsLogin = {
@@ -151,7 +155,7 @@ def getHot10():
     res = requests.post(urlBase, params=paramsHot10, headers=headers)
     if res.json()['rs'] == 1:
         hot_list = res.json()['list']
-        # pprint(hot_list)
+        pprint(res.json())
         idx = 0
         for item in hot_list:
             user_id = item.get('user_id', 'N/A')
@@ -164,6 +168,35 @@ def getHot10():
     else:
         print(res.json()['errcode'])
         return []
+
+def getHot10New():
+    api = WebAPI.WebAPI(getInfo('username'), getInfo('password'))
+    hl = api.get_top_10_post()['hot']
+    ans = []
+    for h in hl:
+        print(h)
+        tid = int(h['tid'])
+        info = api.get_thread_info(tid)
+        paramst = {
+            'r': 'forum/postlist',
+            'topicId': tid,
+            'pageSize': 1,
+            'page': 1,
+            'order': 1,
+            'accessToken': getInfo('token'),
+            'accessSecret': getInfo('secret')
+        }
+        res = requests.post(urlBase, params = paramst, headers = headers)
+        pprint(res.json()['topic']['hits'])
+        info['hits'] = res.json()['topic']['hits']
+        info['user_id'] = info['uid']
+        info['summary'] = info['first_paragraph'][:30]
+        info['replies'] = info['reply_count']
+        info['user_nick_name'] = info['author']
+        info['sourceWebUrl'] = res.json()['forumTopicUrl']
+        info['board_name'] = res.json()['forumName']
+        ans.append(info)
+    return ans
 
 def reply(tid, content):
     replycontent = [{'type': 0,'infor': content}]

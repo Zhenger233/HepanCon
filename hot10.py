@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from fun import login, getInfo, getHot10, reply, getLatestHot
+from fun import login, getInfo, getHot10, reply, getLatestHot, getHot10New
 import requests, re, random, hashlib, time
 from datetime import datetime, timedelta
 myUsername = getInfo('username')
@@ -35,14 +35,17 @@ def hot10list2str(hot10list: list) -> str:
         res += f'[tr][td]{idx}[/td][td]{user_nick_name}[/td][td][url={sourceWebUrl}]{title}[/url][/td][td]{summary}[/td][td]{replies}[/td][td]{hits}[/td][td]{board}[/td][/tr]\n'
         idx += 1
     res += '[/table]\n'
-    res += getZhihu()
+    # res += getZhihu()
     # res += url_s
     return res
 
+
+
 def testReplyHot10():
     login(myUsername, myPassword)
-    l = getHot10()
+    l = getHot10New()
     s = hot10list2str(l)
+    # print(s)
     reply(2225218, s)
     
     content = getLatestHot()
@@ -59,6 +62,7 @@ def testReplyHot10():
     print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
     s += f'\ntime: {randt.strftime("%Y-%m-%d %H:%M:%S")}'
     time.sleep(5)
+    print(s)
     reply(2247158, s)
 
 if __name__ == '__main__':

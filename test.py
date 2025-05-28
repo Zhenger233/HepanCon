@@ -133,6 +133,6 @@ if __name__ == '__main__':
     # testZhihu()
     # testGetReplyList()
     # checkLogin()
-    # testGetPeplyListNew() # todo: edit 2225218
-    testRoll()
+    testGetPeplyListNew() # todo: edit 2225218
+    # testRoll()
     ...
