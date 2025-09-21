@@ -49,7 +49,7 @@ def getReplyList(tid: int, page: int = 1, pageSize: int = 10):
         'accessToken': getInfo('token'),
         'accessSecret': getInfo('secret')
     }
-    res = requests.post(urlBase, params = paramst, headers = headers)
+    res = session.post(urlBase, params = paramst, headers = headers)
     if res.json()['rs'] == 1:
         return res.json()['list']
     else:
@@ -67,7 +67,7 @@ def getLatestHot():
         'accessSecret': getInfo('secret'),
         'authorId': 217527
     }
-    res = requests.post(urlBase, params = paramst, headers = headers)
+    res = session.post(urlBase, params = paramst, headers = headers)
     if res.json()['rs'] == 1:
         return res.json()['list'][0]['reply_content']
     else:
@@ -86,7 +86,7 @@ def checkLogin() -> bool:
         'accessToken': getInfo('token'),
         'accessSecret': getInfo('secret')
     }
-    res = requests.post(urlBase, params = paramst, headers = headers)
+    res = session.post(urlBase, params = paramst, headers = headers)
     pprint(res.json()['topic']['hits'])
     if res.json()['rs'] == 1:
         return True
@@ -103,7 +103,7 @@ def loginWithUsernamePassword(username: str = '', password: str = ''):
         'password': password,
     }
     try:
-        res = requests.post(urlBase, params = paramsLogin, headers = headers)
+        res = session.post(urlBase, params = paramsLogin, headers = headers)
         # print(res.json())
         if res.json()['rs'] != 1:
             print(res.json()['errcode'])
@@ -150,9 +150,11 @@ def getReplyListNew(tid: int, page: int = 1, pageSize: int = 10):
 def getHot10():
     paramsHot10 = {
         'r': 'portal/newslist',
-        'moduleId': 2
+        'moduleId': 2,
+        'accessToken': getInfo('token'),
+        'accessSecret': getInfo('secret')
     }
-    res = requests.post(urlBase, params=paramsHot10, headers=headers)
+    res = session.post(urlBase, params=paramsHot10, headers=headers)
     if res.json()['rs'] == 1:
         hot_list = res.json()['list']
         pprint(res.json())
@@ -186,7 +188,7 @@ def getHot10New():
             'accessToken': getInfo('token'),
             'accessSecret': getInfo('secret')
         }
-        res = requests.post(urlBase, params = paramst, headers = headers)
+        res = session.post(urlBase, params = paramst, headers = headers)
         pprint(res.json()['topic']['hits'])
         info['hits'] = res.json()['topic']['hits']
         info['user_id'] = info['uid']
@@ -217,7 +219,7 @@ def reply(tid, content):
         'accessSecret': getInfo('secret')
     }
     data1 = { 'act': 'reply', 'json': json.dumps(replyjson) }
-    res = requests.post(urlBase, params=paramsReply, headers=headers, data=data1)
+    res = session.post(urlBase, params=paramsReply, headers=headers, data=data1)
     try:
         if res.json()['rs'] == 1:
             pprint(strings[7])
