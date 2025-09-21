@@ -43,27 +43,27 @@ def hot10list2str(hot10list: list) -> str:
 
 def testReplyHot10():
     login(myUsername, myPassword)
-    l = getHot10New()
+    l = getHot10()
     s = hot10list2str(l)
-    # print(s)
+    print(s)
     reply(2225218, s)
     
-    content = getLatestHot()
-    s = ''.join(map(lambda x: x['infor'], content))
-    print(s)
-    seed = int(hashlib.md5(s.encode()).hexdigest(), 16)
-    print('seed: ', seed)
-    s += f'\nseed: {seed}'
-    random.seed(seed)
-    rands = random.randint(0, 24 * 60 * 60 - 1)
-    print('seconds: ', rands)
-    s += f'\nseconds: {rands}'
-    randt = datetime.now().replace(hour = 0, minute = 0, second = 0, microsecond = 0) + timedelta(seconds = rands)
-    print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
-    s += f'\ntime: {randt.strftime("%Y-%m-%d %H:%M:%S")}'
-    time.sleep(5)
-    print(s)
-    reply(2247158, s)
+    # content = getLatestHot()
+    # s = ''.join(map(lambda x: x['infor'], content))
+    # print(s)
+    # seed = int(hashlib.md5(s.encode()).hexdigest(), 16)
+    # print('seed: ', seed)
+    # s += f'\nseed: {seed}'
+    # random.seed(seed)
+    # rands = random.randint(0, 24 * 60 * 60 - 1)
+    # print('seconds: ', rands)
+    # s += f'\nseconds: {rands}'
+    # randt = datetime.now().replace(hour = 0, minute = 0, second = 0, microsecond = 0) + timedelta(seconds = rands)
+    # print('time: ', randt.strftime('%Y-%m-%d %H:%M:%S'))
+    # s += f'\ntime: {randt.strftime("%Y-%m-%d %H:%M:%S")}'
+    # time.sleep(5)
+    # print(s)
+    # reply(2247158, s)
 
 if __name__ == '__main__':
     # testLogin()
@@ -71,4 +71,4 @@ if __name__ == '__main__':
     testReplyHot10()
     ...
     
-# 30 21 * * * cd /home/zz/gits/HepanCon;/home/zz/gits/HepanCon/hot10.py
+# 30 21 * * * cd /home/zz/gits/HepanCon && /usr/bin/env python3 hot10.py >> ~/log/hepancon/hot10.log 2>> ~/log/hepancon/hot10.err.log

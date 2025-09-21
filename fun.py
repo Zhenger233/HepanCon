@@ -3,6 +3,7 @@ import requests
 import time
 import json
 import getpass
+import random
 from strs import strings
 from pprint import pprint
 import WebAPI
@@ -201,11 +202,17 @@ def getHot10New():
     return ans
 
 def reply(tid, content):
-    replycontent = [{'type': 0,'infor': content}]
+    """Send a reply to topic `tid` with `content`.
+
+    Retries up to 3 times on failure. Between failed attempts waits a
+    random delay between 5 and 10 seconds. Returns True on success,
+    False on final failure.
+    """
+    replycontent = [{'type': 0, 'infor': content}]
     replyjson = {
         'body': {
             'json': {
-                'tid': tid, 
+                'tid': tid,
                 'content': json.dumps(replycontent),
             }
         }
@@ -218,12 +225,48 @@ def reply(tid, content):
         'accessToken': getInfo('token'),
         'accessSecret': getInfo('secret')
     }
-    data1 = { 'act': 'reply', 'json': json.dumps(replyjson) }
-    res = session.post(urlBase, params=paramsReply, headers=headers, data=data1)
-    try:
-        if res.json()['rs'] == 1:
+    data1 = {'act': 'reply', 'json': json.dumps(replyjson)}
+
+    max_attempts = 3
+    attempt = 0
+    while attempt < max_attempts:
+        attempt += 1
+        try:
+            res = session.post(urlBase, params=paramsReply, headers=headers, data=data1, timeout=30)
+        except Exception as e:
+            # network/connection error, decide to retry
+            print(f"Attempt {attempt} failed with exception: {e}")
+            if attempt >= max_attempts:
+                print(strings[5])
+                return False
+            sleep_time = random.uniform(5, 10)
+            print(f"Retrying after {sleep_time:.1f}s...")
+            time.sleep(sleep_time)
+            continue
+
+        # got a response, try to parse JSON
+        try:
+            body = res.json()
+        except Exception:
+            print(f"Attempt {attempt} received non-JSON response:")
+            print(res.text)
+            if attempt >= max_attempts:
+                return False
+            sleep_time = random.uniform(5, 10)
+            print(f"Retrying after {sleep_time:.1f}s...")
+            time.sleep(sleep_time)
+            continue
+
+        # check server-level success
+        if isinstance(body, dict) and body.get('rs') == 1:
             pprint(strings[7])
+            return True
         else:
-            pprint(res.json())
-    except:
-        print(res.text)
+            # server responded but indicated failure
+            pprint(body)
+            if attempt >= max_attempts:
+                return False
+            sleep_time = random.uniform(5, 10)
+            print(f"Server returned failure; retrying after {sleep_time:.1f}s (attempt {attempt}/{max_attempts})")
+            time.sleep(sleep_time)
+            continue
